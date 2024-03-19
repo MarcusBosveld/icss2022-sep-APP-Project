@@ -46,7 +46,8 @@ ASSIGNMENT_OPERATOR: ':=';
 
 //--- PARSER: ---
 
-stylesheet: EOF;
+stylesheet: (variableAssignment | styleRule)+ | EOF;
+
 
 
 pixelLiteral: PIXELSIZE;
@@ -56,7 +57,7 @@ scalarLiteral: SCALAR;
 boolLiteral: TRUE | FALSE;
 
 literal: colorLiteral | percentageLiteral | scalarLiteral | boolLiteral | pixelLiteral;
-
+declaration: OPEN_BRACE (properties | ifClause)+ CLOSE_BRACE;
 //Variables
 variableReference: CAPITAL_IDENT;
 
@@ -68,3 +69,13 @@ expression: expression ('*'|'/') expression | expression ('+'|'-') expression | 
 //CSS Rules
 classSelector: CLASS_IDENT;
 propertyName: LOWER_IDENT;
+idSelector: ID_IDENT;
+tagSelector: LOWER_IDENT;
+
+selector: tagSelector | idSelector | classSelector;
+styleRule: selector declaration;
+properties: propertyName COLON (literal | variableReference | expression) SEMICOLON;
+
+//if statements
+ifClause: IF BOX_BRACKET_OPEN (boolLiteral | variableReference) BOX_BRACKET_CLOSE declaration;
+elseClause: ifClause ELSE declaration;
