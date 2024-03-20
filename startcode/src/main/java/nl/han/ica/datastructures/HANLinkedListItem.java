@@ -4,11 +4,13 @@ public class HANLinkedListItem <T> {
     private T value;
     private HANLinkedListItem<T> nodeAfter;
 
-    public HANLinkedListItem(){
-        this.nodeAfter = nodeAfter;
-    }
+
 
     public HANLinkedListItem<T> getNextNode(){
         return nodeAfter;
+    }
+
+    public void setNextNode(HANLinkedListItem<T> nodeAfter){
+        this.nodeAfter = nodeAfter;
     }
 }
