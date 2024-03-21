@@ -2,15 +2,16 @@ package nl.han.ica.datastructures;
 
 public class HANLinkedList<T> implements IHANLinkedList<T> {
     private HANLinkedListItem<T> header;
-    
+
     public HANLinkedList(){
-        this.header = new HANLinkedListItem<T>();
+        this.header = null;
     }
     @Override
     public void addFirst(T value) {
     //TODO: Vragen of de interface veranderd mag worden voor datatype
         HANLinkedListItem<T> oldHeader = this.header;
-        this.header = (HANLinkedListItem<T>) value;
+
+        this.header = new HANLinkedListItem<T>(value);
         this.header.setNextNode(oldHeader);
     }
 
@@ -27,15 +28,16 @@ public class HANLinkedList<T> implements IHANLinkedList<T> {
     @Override
     public void delete(int pos) {
 
-        HANLinkedListItem<T> beforeDelete = (HANLinkedListItem<T>) get(pos-1);
-        HANLinkedListItem<T> afterDelete = (HANLinkedListItem<T>) get(pos + 1);
+       if (pos == 0) {
+           removeFirst();
+           return;
+       }
+       HANLinkedListItem<T> beforeDelete = (HANLinkedListItem<T>) get(pos - 1);
+       HANLinkedListItem<T> afterDelete = (HANLinkedListItem<T>) get(pos + 1);
 
-        if(pos == 0){
-            removeFirst();
-        }
-        else{
-            beforeDelete.setNextNode(afterDelete);
-        }
+
+        beforeDelete.setNextNode(afterDelete);
+
     }
 
 
@@ -44,14 +46,26 @@ public class HANLinkedList<T> implements IHANLinkedList<T> {
         HANLinkedListIterator<T> iterator = new HANLinkedListIterator<T>(header);
         int walkpos = pos;
 
-        if(walkpos > 0){
-            iterator.advance();
-            walkpos--;
-            return get(walkpos);
-        }
-        else{
+           while(walkpos > 0) {
+               iterator.advance();
+               walkpos--;
+           }
+
             return (T) iterator.retrieveCurrent();
-        }
+
+    }
+
+
+    public T getValue(int pos) {
+        HANLinkedListIterator<T> iterator = new HANLinkedListIterator<T>(header);
+        int walkpos = pos;
+
+           while(walkpos > 0) {
+               iterator.advance();
+               walkpos--;
+           }
+
+            return (T) iterator.retrieveCurrent().getValue();
     }
 
     @Override
