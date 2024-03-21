@@ -7,11 +7,16 @@ public class HANStack<T> implements IHANStack {
 
     @Override
     public void push(Object value) {
-        HANLinkedListItem<T> oldTopOfStack = topOfStack;
-        HANLinkedListItem<T> newTopOfStack = new HANLinkedListItem<T>((T) value);
-        newTopOfStack.setNextNode(oldTopOfStack);
 
-        topOfStack = newTopOfStack;
+        if (topOfStack == null) {
+            topOfStack = new HANLinkedListItem<T>((T) value);;
+        }
+        else {
+            HANLinkedListItem<T> oldTopOfStack = topOfStack;
+            HANLinkedListItem<T> newTopOfStack = new HANLinkedListItem<T>((T) value);
+            newTopOfStack.setNextNode(oldTopOfStack);
+            topOfStack = newTopOfStack;
+        }
 
     }
 
@@ -19,6 +24,8 @@ public class HANStack<T> implements IHANStack {
     public Object pop() {
         HANLinkedListItem<T> oldTopOfStack = topOfStack;
         HANLinkedListItem<T> newTopOfStack = topOfStack.getNextNode();
+
+        topOfStack = newTopOfStack;
         return oldTopOfStack;
     }
 
