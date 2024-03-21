@@ -3,9 +3,7 @@ package nl.han.ica.datastructures;
 public class HANLinkedListItem <T> {
 
 
-    public T getValue() {
-        return value;
-    }
+
 
     private T value;
     private HANLinkedListItem<T> nodeAfter;
@@ -13,6 +11,10 @@ public class HANLinkedListItem <T> {
     public HANLinkedListItem(T value){
         this.value = value;
         this.nodeAfter = null;
+    }
+
+    public T getValue() {
+        return value;
     }
 
     public HANLinkedListItem<T> getNextNode(){
