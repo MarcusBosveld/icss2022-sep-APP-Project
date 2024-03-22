@@ -1,19 +1,21 @@
 package nl.han.ica.datastructures;
 
-public class HANStack<T> implements IHANStack {
+import nl.han.ica.icss.ast.ASTNode;
 
-    private HANLinkedListItem<T> topOfStack;
+public class HANStack<T> implements IHANStack<ASTNode> {
+
+    private HANLinkedListItem<ASTNode> topOfStack;
 
 
     @Override
-    public void push(Object value) {
+    public void push(ASTNode value) {
 
         if (topOfStack == null) {
-            topOfStack = new HANLinkedListItem<T>((T) value);;
-        }
-        else {
-            HANLinkedListItem<T> oldTopOfStack = topOfStack;
-            HANLinkedListItem<T> newTopOfStack = new HANLinkedListItem<T>((T) value);
+            topOfStack = new HANLinkedListItem<ASTNode>(value);
+            ;
+        } else {
+            HANLinkedListItem<ASTNode> oldTopOfStack = topOfStack;
+            HANLinkedListItem<ASTNode> newTopOfStack = new HANLinkedListItem<ASTNode>(value);
             newTopOfStack.setNextNode(oldTopOfStack);
             topOfStack = newTopOfStack;
         }
@@ -21,16 +23,16 @@ public class HANStack<T> implements IHANStack {
     }
 
     @Override
-    public Object pop() {
-        HANLinkedListItem<T> oldTopOfStack = topOfStack;
-        HANLinkedListItem<T> newTopOfStack = topOfStack.getNextNode();
+    public ASTNode pop() {
+        HANLinkedListItem<ASTNode> oldTopOfStack = topOfStack;
+        HANLinkedListItem<ASTNode> newTopOfStack = topOfStack.getNextNode();
 
         topOfStack = newTopOfStack;
-        return oldTopOfStack;
+        return oldTopOfStack.getValue();
     }
 
     @Override
-    public Object peek() {
-        return topOfStack;
+    public ASTNode peek() {
+        return topOfStack.getValue();
     }
 }

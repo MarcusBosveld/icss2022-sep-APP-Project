@@ -17,7 +17,6 @@ public class HANLinkedList<T> implements IHANLinkedList<T> {
 
     @Override
     public void clear() {
-        this.header.setNextNode(null);
         this.header = null;
     }
 
@@ -27,15 +26,12 @@ public class HANLinkedList<T> implements IHANLinkedList<T> {
 
     @Override
     public void delete(int pos) {
-
        if (pos == 0) {
            removeFirst();
            return;
        }
-       HANLinkedListItem<T> beforeDelete = (HANLinkedListItem<T>) get(pos - 1);
-       HANLinkedListItem<T> afterDelete = (HANLinkedListItem<T>) get(pos + 1);
-
-
+        HANLinkedListItem<T> beforeDelete = getNode(pos - 1);
+        HANLinkedListItem<T> afterDelete = getNode(pos + 1);
         beforeDelete.setNextNode(afterDelete);
 
     }
@@ -46,37 +42,40 @@ public class HANLinkedList<T> implements IHANLinkedList<T> {
         HANLinkedListIterator<T> iterator = new HANLinkedListIterator<T>(header);
         int walkpos = pos;
 
-           while(walkpos > 0) {
-               iterator.advance();
-               walkpos--;
-           }
+        while(walkpos > 0) {
+            iterator.advance();
+            walkpos--;
+        }
 
-            return (T) iterator.retrieveCurrent();
+        return  iterator.retrieveCurrent().getValue();
+
+
 
     }
 
 
-    public T getValue(int pos) {
+    public HANLinkedListItem<T> getNode(int pos) {
         HANLinkedListIterator<T> iterator = new HANLinkedListIterator<T>(header);
         int walkpos = pos;
 
-           while(walkpos > 0) {
-               iterator.advance();
-               walkpos--;
-           }
+        while(walkpos > 0) {
+            iterator.advance();
+            walkpos--;
+        }
 
-            return (T) iterator.retrieveCurrent().getValue();
+        return iterator.getCurrent();
+
     }
 
     @Override
     public void removeFirst() {
-        HANLinkedListItem<T> newHeader = (HANLinkedListItem<T>) get(1);
+        HANLinkedListItem<T> newHeader = header.getNextNode();
         this.header = newHeader;
     }
 
     @Override
     public T getFirst() {
-        return (T) header;
+        return header.getValue();
     }
 
     @Override
