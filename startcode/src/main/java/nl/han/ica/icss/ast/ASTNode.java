@@ -1,5 +1,10 @@
 package nl.han.ica.icss.ast;
 
+import nl.han.ica.icss.ast.literals.ColorLiteral;
+import nl.han.ica.icss.ast.literals.PercentageLiteral;
+import nl.han.ica.icss.ast.literals.PixelLiteral;
+import nl.han.ica.icss.ast.literals.ScalarLiteral;
+import nl.han.ica.icss.ast.types.ExpressionType;
 import nl.han.ica.icss.checker.SemanticError;
 
 import java.util.ArrayList;
@@ -82,4 +87,7 @@ public class ASTNode {
         }
         return true;
     }
+
+
+
 }
