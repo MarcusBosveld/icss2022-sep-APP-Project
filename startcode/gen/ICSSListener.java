@@ -107,15 +107,45 @@ public interface ICSSListener extends ParseTreeListener {
 	 */
 	void exitVariableAssignment(ICSSParser.VariableAssignmentContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ICSSParser#expression}.
+	 * Enter a parse tree produced by {@link ICSSParser#multiplyOperation}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpression(ICSSParser.ExpressionContext ctx);
+	void enterMultiplyOperation(ICSSParser.MultiplyOperationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ICSSParser#expression}.
+	 * Exit a parse tree produced by {@link ICSSParser#multiplyOperation}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpression(ICSSParser.ExpressionContext ctx);
+	void exitMultiplyOperation(ICSSParser.MultiplyOperationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ICSSParser#addOperation}.
+	 * @param ctx the parse tree
+	 */
+	void enterAddOperation(ICSSParser.AddOperationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ICSSParser#addOperation}.
+	 * @param ctx the parse tree
+	 */
+	void exitAddOperation(ICSSParser.AddOperationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ICSSParser#subtractOperation}.
+	 * @param ctx the parse tree
+	 */
+	void enterSubtractOperation(ICSSParser.SubtractOperationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ICSSParser#subtractOperation}.
+	 * @param ctx the parse tree
+	 */
+	void exitSubtractOperation(ICSSParser.SubtractOperationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ICSSParser#operation}.
+	 * @param ctx the parse tree
+	 */
+	void enterOperation(ICSSParser.OperationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ICSSParser#operation}.
+	 * @param ctx the parse tree
+	 */
+	void exitOperation(ICSSParser.OperationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ICSSParser#classSelector}.
 	 * @param ctx the parse tree

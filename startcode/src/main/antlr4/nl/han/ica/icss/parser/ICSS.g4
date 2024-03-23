@@ -58,7 +58,7 @@ boolLiteral: TRUE | FALSE;
 
 literal: colorLiteral | percentageLiteral | scalarLiteral | boolLiteral | pixelLiteral;
 
-declaration: propertyName COLON (literal | variableReference | expression) SEMICOLON;
+declaration: propertyName COLON (literal | variableReference | operation) SEMICOLON;
 
 
 //Variables
@@ -67,7 +67,11 @@ variableReference: CAPITAL_IDENT;
 variableAssignment: variableReference ASSIGNMENT_OPERATOR literal SEMICOLON;
 
 //Operations
-expression: expression ('*'|'/') expression | expression ('+'|'-') expression | (literal | variableReference) | '('expression')';
+multiplyOperation: MUL;
+addOperation: PLUS;
+subtractOperation: MIN;
+
+operation: operation (multiplyOperation) operation | operation (addOperation|subtractOperation) operation | (literal | variableReference) | '('operation')';
 
 //CSS Rules
 classSelector: CLASS_IDENT;
@@ -76,9 +80,9 @@ idSelector: ID_IDENT;
 tagSelector: LOWER_IDENT;
 
 selector: tagSelector | idSelector | classSelector;
-styleRule: selector OPEN_BRACE declaration* CLOSE_BRACE;
+styleRule: selector OPEN_BRACE (declaration| ifClause)+ CLOSE_BRACE;
 
 
 //if statements
-ifClause: IF BOX_BRACKET_OPEN (boolLiteral | variableReference) BOX_BRACKET_CLOSE declaration elseClause?;
-elseClause: ELSE declaration;
+ifClause: IF BOX_BRACKET_OPEN (boolLiteral | variableReference) BOX_BRACKET_CLOSE OPEN_BRACE (declaration | ifClause)+ CLOSE_BRACE elseClause?;
+elseClause: ELSE OPEN_BRACE (declaration | ifClause)+ CLOSE_BRACE;

@@ -19,6 +19,11 @@ public class Checker {
     }
 
 
+    public void checkSemantics(){
+        
+    }
+
+
     public void checkVariableDeclaration() {
 
     }

@@ -112,6 +112,7 @@ public class ASTListener extends ICSSBaseListener {
 		currentContainer.push(boolLiteral);
 	}
 
+
 	@Override
 	public void exitBoolLiteral(ICSSParser.BoolLiteralContext ctx) {
 		ASTNode boolLiteral = currentContainer.pop();
@@ -153,6 +154,34 @@ public class ASTListener extends ICSSBaseListener {
 	public void exitVariableAssignment(ICSSParser.VariableAssignmentContext ctx) {
 		ASTNode variableAssignment = currentContainer.pop();
 		currentContainer.peek().addChild(variableAssignment);
+	}
+
+	@Override
+	public void enterOperation(ICSSParser.OperationContext ctx) {
+		if(ctx.getChildCount() == 3) {
+			switch(ctx.getChild(1).getText()) {
+				case "+":
+					ASTNode operation = new AddOperation();
+					currentContainer.push(operation);
+					break;
+				case "-":
+					operation = new SubtractOperation();
+					currentContainer.push(operation);
+					break;
+				case "*":
+					operation = new MultiplyOperation();
+					currentContainer.push(operation);
+					break;
+			}
+		}
+	}
+
+	@Override
+	public void exitOperation(ICSSParser.OperationContext ctx) {
+		if (ctx.getChildCount() == 3) {
+			ASTNode operation = currentContainer.pop();
+			currentContainer.peek().addChild(operation);
+		}
 	}
 
 	@Override
