@@ -112,12 +112,6 @@ public interface ICSSVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStyleRule(ICSSParser.StyleRuleContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ICSSParser#properties}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitProperties(ICSSParser.PropertiesContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link ICSSParser#ifClause}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

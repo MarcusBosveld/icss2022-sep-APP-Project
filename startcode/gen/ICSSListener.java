@@ -177,16 +177,6 @@ public interface ICSSListener extends ParseTreeListener {
 	 */
 	void exitStyleRule(ICSSParser.StyleRuleContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ICSSParser#properties}.
-	 * @param ctx the parse tree
-	 */
-	void enterProperties(ICSSParser.PropertiesContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ICSSParser#properties}.
-	 * @param ctx the parse tree
-	 */
-	void exitProperties(ICSSParser.PropertiesContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link ICSSParser#ifClause}.
 	 * @param ctx the parse tree
 	 */

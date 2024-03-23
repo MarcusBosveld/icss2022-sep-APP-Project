@@ -9,16 +9,10 @@ public class HANStack<T> implements IHANStack<ASTNode> {
 
     @Override
     public void push(ASTNode value) {
+        HANLinkedListItem<ASTNode> newTopOfStack = new HANLinkedListItem<ASTNode>(value);
+        newTopOfStack.setNextNode(topOfStack);
 
-        if (topOfStack == null) {
-            topOfStack = new HANLinkedListItem<ASTNode>(value);
-            ;
-        } else {
-            HANLinkedListItem<ASTNode> oldTopOfStack = topOfStack;
-            HANLinkedListItem<ASTNode> newTopOfStack = new HANLinkedListItem<ASTNode>(value);
-            newTopOfStack.setNextNode(oldTopOfStack);
-            topOfStack = newTopOfStack;
-        }
+        topOfStack = newTopOfStack;
 
     }
 

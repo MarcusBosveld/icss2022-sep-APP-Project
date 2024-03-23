@@ -57,7 +57,10 @@ scalarLiteral: SCALAR;
 boolLiteral: TRUE | FALSE;
 
 literal: colorLiteral | percentageLiteral | scalarLiteral | boolLiteral | pixelLiteral;
-declaration: OPEN_BRACE (properties | ifClause)+ CLOSE_BRACE;
+
+declaration: propertyName COLON (literal | variableReference | expression) SEMICOLON;
+
+
 //Variables
 variableReference: CAPITAL_IDENT;
 
@@ -73,8 +76,8 @@ idSelector: ID_IDENT;
 tagSelector: LOWER_IDENT;
 
 selector: tagSelector | idSelector | classSelector;
-styleRule: selector declaration;
-properties: propertyName COLON (literal | variableReference | expression) SEMICOLON;
+styleRule: selector OPEN_BRACE declaration* CLOSE_BRACE;
+
 
 //if statements
 ifClause: IF BOX_BRACKET_OPEN (boolLiteral | variableReference) BOX_BRACKET_CLOSE declaration elseClause?;
