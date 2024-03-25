@@ -79,9 +79,9 @@ idSelector: ID_IDENT;
 tagSelector: LOWER_IDENT;
 
 selector: tagSelector | idSelector | classSelector;
-styleRule: selector OPEN_BRACE (declaration| ifClause)+ CLOSE_BRACE;
+styleRule: selector OPEN_BRACE (declaration | ifClause | variableAssignment)+ CLOSE_BRACE;
 
 
 //if statements
-ifClause: IF BOX_BRACKET_OPEN (boolLiteral | variableReference) BOX_BRACKET_CLOSE OPEN_BRACE (declaration | ifClause)+ CLOSE_BRACE elseClause?;
-elseClause: ELSE OPEN_BRACE (declaration | ifClause)+ CLOSE_BRACE;
+ifClause: IF BOX_BRACKET_OPEN (boolLiteral | variableReference) BOX_BRACKET_CLOSE OPEN_BRACE (declaration | ifClause | variableAssignment)+ CLOSE_BRACE elseClause?;
+elseClause: ELSE OPEN_BRACE (declaration | ifClause | variableAssignment)+ CLOSE_BRACE;

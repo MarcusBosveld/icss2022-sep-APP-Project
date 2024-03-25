@@ -27,11 +27,11 @@ public class Checker {
         if(node instanceof VariableAssignment){
             isVariableAssignment = true;
         }
-
+        if(node instanceof Stylesheet | node instanceof Stylerule | node instanceof IfClause){
+            variableTypes.addFirst(new HashMap<String,ExpressionType>());
+        }
         checkDeclaration(node);
         checkVariableAssignment(node);
-
-        variableTypes.addFirst(new HashMap<String,ExpressionType>());
         for(ASTNode child: node.getChildren()){
             if(!node.getChildren().isEmpty()){
                 checkSemantics(child);
@@ -42,7 +42,9 @@ public class Checker {
         if(node instanceof VariableAssignment){
             isVariableAssignment = false;
         }
-//        variableTypes.removeFirst();
+        if (node instanceof Stylesheet | node instanceof Stylerule | node instanceof IfClause){
+            variableTypes.removeFirst();
+        }
     }
 
     public void checkDeclaration(ASTNode declaration) {
