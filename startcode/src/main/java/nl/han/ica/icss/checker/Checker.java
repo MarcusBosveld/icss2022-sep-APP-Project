@@ -4,6 +4,7 @@ import nl.han.ica.datastructures.HANLinkedList;
 import nl.han.ica.datastructures.IHANLinkedList;
 import nl.han.ica.icss.ast.*;
 import nl.han.ica.icss.ast.literals.*;
+import nl.han.ica.icss.ast.operations.MultiplyOperation;
 import nl.han.ica.icss.ast.types.ExpressionType;
 
 import java.util.HashMap;
@@ -32,6 +33,7 @@ public class Checker {
         }
         checkDeclaration(node);
         checkVariableAssignment(node);
+        checkOperationsSameLiterals(node);
         for(ASTNode child: node.getChildren()){
             if(!node.getChildren().isEmpty()){
                 checkSemantics(child);
@@ -132,8 +134,52 @@ public class Checker {
         }
     }
 
+    public void checkOperationsSameLiterals(ASTNode node){
+        if(node instanceof Operation){
+            ASTNode leftside = node.getChildren().get(0);
+            ASTNode rightside = node.getChildren().get(1);
 
-    public ExpressionType getVariableReferenceType(String variableName){
+            if(leftside instanceof VariableReference){
+                String variableName = ((VariableReference) leftside).name;
+                ExpressionType expressionType = getVariableReferenceType(variableName);
+                if (expressionType == ExpressionType.PIXEL){
+                    leftside = new PixelLiteral(0);
+                } else if (expressionType == ExpressionType.PERCENTAGE){
+                    leftside = new PercentageLiteral(0);
+                }
+            }
+            if(rightside instanceof VariableReference){
+                String variableName = ((VariableReference) rightside).name;
+                ExpressionType expressionType = getVariableReferenceType(variableName);
+                if (expressionType == ExpressionType.PIXEL){
+                    rightside = new PixelLiteral(0);
+                } else if (expressionType == ExpressionType.PERCENTAGE){
+                    rightside = new PercentageLiteral(0);
+                }
+            }
+
+            if(node instanceof MultiplyOperation) {
+                if (leftside instanceof PixelLiteral && rightside instanceof PixelLiteral) {
+                    node.setError("Ewa broer, je mag alleen vermedigvuldigen met Scalaire waardes asabi");
+                } else if (leftside instanceof PercentageLiteral && rightside instanceof PercentageLiteral) {
+                    node.setError("Ewa broer, je mag alleen vermedigvuldigen met Scalaire waardes asabi");
+                } else if (leftside instanceof PixelLiteral && rightside instanceof PercentageLiteral) {
+                    node.setError("Ewa broer, je mag alleen vermedigvuldigen met Scalaire waardes asabi");
+                } else if (leftside instanceof PercentageLiteral && rightside instanceof PixelLiteral) {
+                    node.setError("Ewa broer, je mag alleen vermedigvuldigen met Scalaire waardes asabi");
+                }
+            }
+
+            if(leftside instanceof PixelLiteral && !(rightside instanceof PixelLiteral)){
+                node.setError("Ewa broer, je moet alleen rekenen met pixels bij pixels asabi");
+            } else if (leftside instanceof PercentageLiteral && !(rightside instanceof PercentageLiteral)) {
+                node.setError("Ewa broer, je moet alleen rekenen met percentages bij percentages asabi");
+            }
+
+        }
+    }
+
+        public ExpressionType getVariableReferenceType(String variableName){
         ExpressionType expressionType = ExpressionType.UNDEFINED;
         for(int i = 0; i < variableTypes.getSize(); i++){
             if(variableTypes.get(i).containsKey(variableName)){
