@@ -4,7 +4,9 @@ import nl.han.ica.datastructures.HANLinkedList;
 import nl.han.ica.datastructures.IHANLinkedList;
 import nl.han.ica.icss.ast.*;
 import nl.han.ica.icss.ast.literals.*;
+import nl.han.ica.icss.ast.operations.AddOperation;
 import nl.han.ica.icss.ast.operations.MultiplyOperation;
+import nl.han.ica.icss.ast.operations.SubtractOperation;
 import nl.han.ica.icss.ast.types.ExpressionType;
 
 import java.util.HashMap;
@@ -138,27 +140,40 @@ public class Checker {
         if(node instanceof Operation){
             ASTNode leftside = node.getChildren().get(0);
             ASTNode rightside = node.getChildren().get(1);
-
-            if(leftside instanceof VariableReference){
-                String variableName = ((VariableReference) leftside).name;
-                ExpressionType expressionType = getVariableReferenceType(variableName);
-                if (expressionType == ExpressionType.PIXEL){
-                    leftside = new PixelLiteral(0);
-                } else if (expressionType == ExpressionType.PERCENTAGE){
-                    leftside = new PercentageLiteral(0);
-                }
+            if (leftside instanceof VariableReference){
+                leftside = getLiteralFromVariableReference(leftside);
             }
-            if(rightside instanceof VariableReference){
-                String variableName = ((VariableReference) rightside).name;
-                ExpressionType expressionType = getVariableReferenceType(variableName);
-                if (expressionType == ExpressionType.PIXEL){
-                    rightside = new PixelLiteral(0);
-                } else if (expressionType == ExpressionType.PERCENTAGE){
-                    rightside = new PercentageLiteral(0);
-                }
+            if (rightside instanceof VariableReference){
+                rightside = getLiteralFromVariableReference(rightside);
             }
 
-            if(node instanceof MultiplyOperation) {
+//            if(leftside instanceof VariableReference){
+//                String variableName = ((VariableReference) leftside).name;
+//                ExpressionType expressionType = getVariableReferenceType(variableName);
+//                if (expressionType == ExpressionType.PIXEL){
+//                    leftside = new PixelLiteral(0);
+//                } else if (expressionType == ExpressionType.PERCENTAGE){
+//                    leftside = new PercentageLiteral(0);
+//                } else if (expressionType == ExpressionType.SCALAR) {
+//
+//                }
+//            }
+//            if(rightside instanceof VariableReference){
+//                String variableName = ((VariableReference) rightside).name;
+//                ExpressionType expressionType = getVariableReferenceType(variableName);
+//                if (expressionType == ExpressionType.PIXEL){
+//                    rightside = new PixelLiteral(0);
+//                } else if (expressionType == ExpressionType.PERCENTAGE){
+//                    rightside = new PercentageLiteral(0);
+//                }
+//            }
+            if (leftside instanceof ColorLiteral){
+                node.setError("Ewa broer, je mag niet rekenen met kleuren asabi");
+            }
+            if (rightside instanceof ColorLiteral){
+                node.setError("Ewa broer, je mag niet rekenen met kleuren asabi");
+            }
+            if(node instanceof MultiplyOperation | node instanceof SubtractOperation) {
                 if (leftside instanceof PixelLiteral && rightside instanceof PixelLiteral) {
                     node.setError("Ewa broer, je mag alleen vermedigvuldigen met Scalaire waardes asabi");
                 } else if (leftside instanceof PercentageLiteral && rightside instanceof PercentageLiteral) {
@@ -170,14 +185,39 @@ public class Checker {
                 }
             }
 
-            if(leftside instanceof PixelLiteral && !(rightside instanceof PixelLiteral)){
-                node.setError("Ewa broer, je moet alleen rekenen met pixels bij pixels asabi");
-            } else if (leftside instanceof PercentageLiteral && !(rightside instanceof PercentageLiteral)) {
-                node.setError("Ewa broer, je moet alleen rekenen met percentages bij percentages asabi");
+           else if(node instanceof AddOperation) {
+                if (leftside instanceof PixelLiteral && !(rightside instanceof PixelLiteral)) {
+                    node.setError("Ewa broer, je moet alleen rekenen met pixels bij pixels asabi");
+                } else if (leftside instanceof PercentageLiteral && !(rightside instanceof PercentageLiteral)) {
+                    node.setError("Ewa broer, je moet alleen rekenen met percentages bij percentages asabi");
+                } else if (leftside instanceof ScalarLiteral && !(rightside instanceof ScalarLiteral)) {
+                    node.setError("Ewa broer, je moet alleen rekenen met Scalaire waardes bij Scalaire waardes asabi");
+                    
+                }
             }
 
         }
     }
+
+    public Literal getLiteralFromVariableReference(ASTNode variable){
+        String variableName = ((VariableReference) variable).name;
+        ExpressionType expressionType = getVariableReferenceType(variableName);
+        Literal lookedUpLiteral = null;
+        if (expressionType == ExpressionType.PIXEL){
+            lookedUpLiteral = new PixelLiteral(0);
+        } else if (expressionType == ExpressionType.PERCENTAGE){
+            lookedUpLiteral = new PercentageLiteral(0);
+        } else if (expressionType == ExpressionType.SCALAR) {
+            lookedUpLiteral = new ScalarLiteral(0);
+        } else if (expressionType == ExpressionType.COLOR) {
+            lookedUpLiteral = new ColorLiteral("#ff0000");
+        } else if (expressionType == ExpressionType.BOOL) {
+            lookedUpLiteral = new BoolLiteral(false);
+        }
+        return lookedUpLiteral;
+    }
+
+
 
         public ExpressionType getVariableReferenceType(String variableName){
         ExpressionType expressionType = ExpressionType.UNDEFINED;
