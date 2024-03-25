@@ -36,6 +36,7 @@ public class Checker {
         checkDeclaration(node);
         checkVariableAssignment(node);
         checkOperationsSameLiterals(node);
+        checkBooleanIfClause(node);
         for(ASTNode child: node.getChildren()){
             if(!node.getChildren().isEmpty()){
                 checkSemantics(child);
@@ -135,45 +136,21 @@ public class Checker {
             }
         }
     }
-
+//TODO: Fixen dat een kleur aan de rechter kant ook fout wordt gerekend. En wat refactoren.
     public void checkOperationsSameLiterals(ASTNode node){
         if(node instanceof Operation){
             ASTNode leftside = node.getChildren().get(0);
             ASTNode rightside = node.getChildren().get(1);
-            if (leftside instanceof VariableReference){
-                leftside = getLiteralFromVariableReference(leftside);
-            }
-            if (rightside instanceof VariableReference){
-                rightside = getLiteralFromVariableReference(rightside);
-            }
+            rightside = checkAndAssignVariableReference(rightside);
+            leftside = checkAndAssignVariableReference(leftside);
 
-//            if(leftside instanceof VariableReference){
-//                String variableName = ((VariableReference) leftside).name;
-//                ExpressionType expressionType = getVariableReferenceType(variableName);
-//                if (expressionType == ExpressionType.PIXEL){
-//                    leftside = new PixelLiteral(0);
-//                } else if (expressionType == ExpressionType.PERCENTAGE){
-//                    leftside = new PercentageLiteral(0);
-//                } else if (expressionType == ExpressionType.SCALAR) {
-//
-//                }
-//            }
-//            if(rightside instanceof VariableReference){
-//                String variableName = ((VariableReference) rightside).name;
-//                ExpressionType expressionType = getVariableReferenceType(variableName);
-//                if (expressionType == ExpressionType.PIXEL){
-//                    rightside = new PixelLiteral(0);
-//                } else if (expressionType == ExpressionType.PERCENTAGE){
-//                    rightside = new PercentageLiteral(0);
-//                }
-//            }
             if (leftside instanceof ColorLiteral){
                 node.setError("Ewa broer, je mag niet rekenen met kleuren asabi");
             }
             if (rightside instanceof ColorLiteral){
                 node.setError("Ewa broer, je mag niet rekenen met kleuren asabi");
             }
-            if(node instanceof MultiplyOperation | node instanceof SubtractOperation) {
+            if(node instanceof MultiplyOperation ) {
                 if (leftside instanceof PixelLiteral && rightside instanceof PixelLiteral) {
                     node.setError("Ewa broer, je mag alleen vermedigvuldigen met Scalaire waardes asabi");
                 } else if (leftside instanceof PercentageLiteral && rightside instanceof PercentageLiteral) {
@@ -185,7 +162,7 @@ public class Checker {
                 }
             }
 
-           else if(node instanceof AddOperation) {
+           else if(node instanceof AddOperation | node instanceof SubtractOperation) {
                 if (leftside instanceof PixelLiteral && !(rightside instanceof PixelLiteral)) {
                     node.setError("Ewa broer, je moet alleen rekenen met pixels bij pixels asabi");
                 } else if (leftside instanceof PercentageLiteral && !(rightside instanceof PercentageLiteral)) {
@@ -196,6 +173,19 @@ public class Checker {
                 }
             }
 
+        }
+    }
+
+    public void checkBooleanIfClause(ASTNode node){
+        if(node instanceof IfClause){
+            ASTNode variable = node.getChildren().get(0);
+            if(variable instanceof VariableReference){
+                if(getVariableReferenceType(((VariableReference) variable).name) != ExpressionType.BOOL){
+                    node.setError("Ewa broer, je moet een boolean gebruiken in een if clause asabi");
+                }
+            }else if (variable instanceof Literal && !(variable instanceof BoolLiteral)){
+                node.setError("Ewa broer, je moet een boolean gebruiken in een if clause asabi");
+            }
         }
     }
 
@@ -217,6 +207,13 @@ public class Checker {
         return lookedUpLiteral;
     }
 
+    public ASTNode checkAndAssignVariableReference(ASTNode node){
+        if (node instanceof VariableReference){
+            node = getLiteralFromVariableReference(node);
+            return node;
+        }
+        return node;
+    }
 
 
         public ExpressionType getVariableReferenceType(String variableName){
