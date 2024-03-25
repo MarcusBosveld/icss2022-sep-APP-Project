@@ -63,8 +63,7 @@ declaration: propertyName COLON (literal | variableReference | operation) SEMICO
 
 //Variables
 variableReference: CAPITAL_IDENT;
-
-variableAssignment: variableReference ASSIGNMENT_OPERATOR literal SEMICOLON;
+variableAssignment: variableReference ASSIGNMENT_OPERATOR (literal|operation) SEMICOLON | variableReference SEMICOLON;
 
 //Operations
 multiplyOperation: MUL;
