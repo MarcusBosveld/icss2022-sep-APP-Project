@@ -138,45 +138,6 @@ public class Checker {
         }
     }
 //TODO: Fixen dat een kleur aan de rechter kant ook fout wordt gerekend. En wat refactoren.
-    public void checkOperationsSameLiterals(ASTNode node){
-        if(node instanceof Operation){
-            ASTNode leftside = node.getChildren().get(0);
-            ASTNode rightside = node.getChildren().get(1);
-            rightside = checkAndAssignVariableReference(rightside);
-            leftside = checkAndAssignVariableReference(leftside);
-
-            if (leftside instanceof ColorLiteral){
-                node.setError("Ewa broer, je mag niet rekenen met kleuren asabi");
-            }
-            if (rightside instanceof ColorLiteral){
-                node.setError("Ewa broer, je mag niet rekenen met kleuren asabi");
-            }
-            if(node instanceof MultiplyOperation ) {
-                if (leftside instanceof PixelLiteral && rightside instanceof PixelLiteral) {
-                    node.setError("Ewa broer, je mag alleen vermedigvuldigen met Scalaire waardes asabi");
-                } else if (leftside instanceof PercentageLiteral && rightside instanceof PercentageLiteral) {
-                    node.setError("Ewa broer, je mag alleen vermedigvuldigen met Scalaire waardes asabi");
-                } else if (leftside instanceof PixelLiteral && rightside instanceof PercentageLiteral) {
-                    node.setError("Ewa broer, je mag alleen vermedigvuldigen met Scalaire waardes asabi");
-                } else if (leftside instanceof PercentageLiteral && rightside instanceof PixelLiteral) {
-                    node.setError("Ewa broer, je mag alleen vermedigvuldigen met Scalaire waardes asabi");
-                }
-            }
-
-           else if(node instanceof AddOperation | node instanceof SubtractOperation) {
-                if (leftside instanceof PixelLiteral && !(rightside instanceof PixelLiteral)) {
-                    node.setError("Ewa broer, je moet alleen rekenen met pixels bij pixels asabi");
-                } else if (leftside instanceof PercentageLiteral && !(rightside instanceof PercentageLiteral)) {
-                    node.setError("Ewa broer, je moet alleen rekenen met percentages bij percentages asabi");
-                } else if (leftside instanceof ScalarLiteral && !(rightside instanceof ScalarLiteral)) {
-                    node.setError("Ewa broer, je moet alleen rekenen met Scalaire waardes bij Scalaire waardes asabi");
-
-                }
-            }
-
-        }
-    }
-
     public ASTNode checkOperation(ASTNode node) {
         if (node instanceof Operation) {
             ASTNode leftSide = node.getChildren().get(0);
