@@ -190,16 +190,24 @@ public class Checker {
             if (rightSide instanceof Operation) {
                 rightSide = checkOperation(rightSide);
             }
+            if (leftSide instanceof VariableReference) {
+                leftSide = getLiteralFromVariableReference(leftSide);
+            }
 
+            if (rightSide instanceof VariableReference) {
+                rightSide = getLiteralFromVariableReference(rightSide);
+            }
 
-            if (node instanceof AddOperation || node instanceof SubtractOperation) {
+            if (node instanceof MultiplyOperation) {
+                if (!(rightSide instanceof MultiplyOperation) && !(leftSide instanceof MultiplyOperation)) {
+                    return checkMultiplyOperation(node, leftSide, rightSide);
+                }
+            }
+            else if (node instanceof AddOperation || node instanceof SubtractOperation) {
                 if (!(rightSide instanceof AddOperation) && !(leftSide instanceof AddOperation)) {
                     return checkAddAndSubtractOperation(node, leftSide, rightSide);
                 }
-
             }
-
-
         }
         return null;
     }
@@ -212,6 +220,25 @@ public class Checker {
             }else if(leftside instanceof ScalarLiteral && !(rightside instanceof ScalarLiteral)){
                 node.setError("Ewa broer, je moet alleen rekenen met Scalaire waardes bij Scalaire waardes asabi");
             }else{
+                return leftside;
+            }
+            return null;
+        }
+
+        public ASTNode checkMultiplyOperation(ASTNode node, ASTNode leftside, ASTNode rightside){
+            if (leftside instanceof PixelLiteral && !(rightside instanceof ScalarLiteral)) {
+                node.setError("Ewa broer, je mag alleen vermedigvuldigen met Scalaire waardes asabi");
+            }
+            else if (leftside instanceof PercentageLiteral && !(rightside instanceof ScalarLiteral)) {
+                node.setError("Ewa broer, je mag alleen vermedigvuldigen met Scalaire waardes asabi");
+            }
+            else if (leftside instanceof ScalarLiteral && rightside instanceof ScalarLiteral) {
+                node.setError("Ewa broer, je mag scalaire waardes niet met elkaar vermedigvuldigen asabi");
+            }
+            else if (leftside instanceof ScalarLiteral ){
+                return rightside;
+            }
+            else if (rightside instanceof ScalarLiteral){
                 return leftside;
             }
             return null;
