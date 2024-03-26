@@ -35,7 +35,8 @@ public class Checker {
         }
         checkDeclaration(node);
         checkVariableAssignment(node);
-        checkOperationsSameLiterals(node);
+//        checkOperationsSameLiterals(node);
+        checkOperation(node);
         checkBooleanIfClause(node);
         for(ASTNode child: node.getChildren()){
             if(!node.getChildren().isEmpty()){
@@ -169,12 +170,56 @@ public class Checker {
                     node.setError("Ewa broer, je moet alleen rekenen met percentages bij percentages asabi");
                 } else if (leftside instanceof ScalarLiteral && !(rightside instanceof ScalarLiteral)) {
                     node.setError("Ewa broer, je moet alleen rekenen met Scalaire waardes bij Scalaire waardes asabi");
-                    
+
                 }
             }
 
         }
     }
+
+    public ASTNode checkOperation(ASTNode node) {
+        if (node instanceof Operation) {
+            ASTNode leftSide = node.getChildren().get(0);
+
+            ASTNode rightSide = node.getChildren().get(1);
+
+
+            if (leftSide instanceof Operation) {
+                leftSide = checkOperation(leftSide);
+            }
+            if (rightSide instanceof Operation) {
+                rightSide = checkOperation(rightSide);
+            }
+
+
+            if (node instanceof AddOperation || node instanceof SubtractOperation) {
+                if (!(rightSide instanceof AddOperation) && !(leftSide instanceof AddOperation)) {
+                    return checkAddAndSubtractOperation(node, leftSide, rightSide);
+                }
+
+            }
+
+
+        }
+        return null;
+    }
+
+    public ASTNode checkAddAndSubtractOperation(ASTNode node, ASTNode leftside, ASTNode rightside){
+            if(leftside instanceof PixelLiteral && !(rightside instanceof PixelLiteral)){
+                node.setError("Ewa broer, je moet alleen rekenen met pixels bij pixels asabi");
+            }else if(leftside instanceof PercentageLiteral && !(rightside instanceof PercentageLiteral)){
+                node.setError("Ewa broer, je moet alleen rekenen met percentages bij percentages asabi");
+            }else if(leftside instanceof ScalarLiteral && !(rightside instanceof ScalarLiteral)){
+                node.setError("Ewa broer, je moet alleen rekenen met Scalaire waardes bij Scalaire waardes asabi");
+            }else{
+                return leftside;
+            }
+            return null;
+        }
+
+
+
+
 
     public void checkBooleanIfClause(ASTNode node){
         if(node instanceof IfClause){
