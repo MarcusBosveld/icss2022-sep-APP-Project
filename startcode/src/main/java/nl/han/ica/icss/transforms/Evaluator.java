@@ -89,6 +89,25 @@ public class Evaluator implements Transform {
 
                 }
 
+            }else if (node instanceof MultiplyOperation) {
+                {
+                    if (leftSum instanceof PixelLiteral && rightSum instanceof ScalarLiteral) {
+                        Expression result = new PixelLiteral(((PixelLiteral) leftSum).value * ((ScalarLiteral) rightSum).value);
+                        return result;
+                    } else if (leftSum instanceof PercentageLiteral && rightSum instanceof ScalarLiteral) {
+                        Expression result = new PercentageLiteral(((PercentageLiteral) leftSum).value * ((ScalarLiteral) rightSum).value);
+                        return result;
+                    }
+                    else if (leftSum instanceof ScalarLiteral && rightSum instanceof PixelLiteral) {
+                        Expression result = new PixelLiteral(((ScalarLiteral) leftSum).value * ((PixelLiteral) rightSum).value);
+                        return result;
+                    }
+                    else if (leftSum instanceof ScalarLiteral && rightSum instanceof PercentageLiteral) {
+                        Expression result = new PercentageLiteral(((ScalarLiteral) leftSum).value * ((PercentageLiteral) rightSum).value);
+                        return result;
+                    }
+                }
+
             }
         }
         return null;
