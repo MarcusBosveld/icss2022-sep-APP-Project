@@ -27,7 +27,7 @@ public class Evaluator implements Transform {
     public void apply(AST ast) {
 
 
-        //variableValues = new HANLinkedList<>();
+        variableValues = new HANLinkedList<>();
         evaluate(ast.root);
     }
 
@@ -35,11 +35,15 @@ public class Evaluator implements Transform {
         if(node instanceof Stylesheet | node instanceof Stylerule | node instanceof IfClause){
             variableValues.addFirst(new HashMap<String,Literal>());
         }
+        setVariableValues(node);
         replaceOperation(node);
         for(ASTNode child: node.getChildren()){
             if(!node.getChildren().isEmpty()){
             evaluate(child);
             }
+        }
+        if (node instanceof Stylesheet | node instanceof Stylerule | node instanceof IfClause){
+            variableValues.removeFirst();
         }
 
     }
@@ -55,6 +59,27 @@ public class Evaluator implements Transform {
         }
     }
 
+    public void setVariableValues(ASTNode node){
+        if(node instanceof VariableAssignment){
+            String valueName = ((VariableAssignment) node).name.name;
+            Literal value = (Literal) ((VariableAssignment) node).expression;
+            variableValues.getFirst().put(valueName,value);
+        }
+    }
+
+    public Literal getVariableValues(ASTNode node){
+        Literal variableValue = null;
+        if(node instanceof VariableReference){
+            String variableName = ((VariableReference) node).name;
+            for(int i = 0; i < variableValues.getSize(); i++){
+                if(variableValues.get(i).containsKey(variableName)){
+                    variableValue = variableValues.get(i).get(variableName);
+                }
+            }
+        }
+        return variableValue;
+    }
+
     public Expression evaluateOperations(ASTNode node) {
         if (node instanceof Operation) {
             ASTNode leftSum = ((Operation) node).lhs;
@@ -66,6 +91,14 @@ public class Evaluator implements Transform {
             if (rightSum instanceof Operation) {
                 rightSum = evaluateOperations(rightSum);
             }
+
+            if (leftSum instanceof VariableReference) {
+                leftSum = getVariableValues(leftSum);
+            }
+            if (rightSum instanceof VariableReference) {
+                rightSum = getVariableValues(rightSum);
+            }
+
 
             if (node instanceof AddOperation) {
                 if (leftSum instanceof PixelLiteral && rightSum instanceof PixelLiteral) {
