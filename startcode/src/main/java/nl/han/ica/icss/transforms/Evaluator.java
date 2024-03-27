@@ -28,26 +28,70 @@ public class Evaluator implements Transform {
 
 
         //variableValues = new HANLinkedList<>();
-
+        evaluate(ast.root);
     }
 
     public void evaluate(ASTNode node){
         if(node instanceof Stylesheet | node instanceof Stylerule | node instanceof IfClause){
             variableValues.addFirst(new HashMap<String,Literal>());
         }
-
+        replaceOperation(node);
         for(ASTNode child: node.getChildren()){
             if(!node.getChildren().isEmpty()){
+            evaluate(child);
             }
         }
 
     }
 
-    public void evaluateOperations(ASTNode node){
-        if (node instanceof Operation){
-            if (node instanceof AddOperation){
+
+    public void replaceOperation(ASTNode node){
+        if (node instanceof Declaration){
+        if(((Declaration) node).expression instanceof Operation){
+          Expression value = evaluateOperations(((Declaration) node).expression);
+
+            ((Declaration) node).expression = value;
             }
         }
+    }
+
+    public Expression evaluateOperations(ASTNode node) {
+        if (node instanceof Operation) {
+            ASTNode leftSum = ((Operation) node).lhs;
+            ASTNode rightSum = ((Operation) node).rhs;
+
+            if (leftSum instanceof Operation) {
+                leftSum = evaluateOperations(leftSum);
+            }
+            if (rightSum instanceof Operation) {
+                rightSum = evaluateOperations(rightSum);
+            }
+
+            if (node instanceof AddOperation) {
+                if (leftSum instanceof PixelLiteral && rightSum instanceof PixelLiteral) {
+                    Expression result = new PixelLiteral(((PixelLiteral) leftSum).value + ((PixelLiteral) rightSum).value);
+
+                    return result;
+                } else if (leftSum instanceof PercentageLiteral && rightSum instanceof PercentageLiteral) {
+                    Expression result = new PercentageLiteral(((PercentageLiteral) leftSum).value + ((PercentageLiteral) rightSum).value);
+                    return result;
+                }
+
+            } else if (node instanceof SubtractOperation) {
+                {
+                    if (leftSum instanceof PixelLiteral && rightSum instanceof PixelLiteral) {
+                        Expression result = new PixelLiteral(((PixelLiteral) leftSum).value - ((PixelLiteral) rightSum).value);
+                        return result;
+                    } else if (leftSum instanceof PercentageLiteral && rightSum instanceof PercentageLiteral) {
+                        Expression result = new PercentageLiteral(((PercentageLiteral) leftSum).value - ((PercentageLiteral) rightSum).value);
+                        return result;
+                    }
+
+                }
+
+            }
+        }
+        return null;
     }
 
     
