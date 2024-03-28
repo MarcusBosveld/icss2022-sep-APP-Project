@@ -3,6 +3,7 @@ package nl.han.ica.icss.transforms;
 import nl.han.ica.datastructures.HANLinkedList;
 import nl.han.ica.datastructures.IHANLinkedList;
 import nl.han.ica.icss.ast.*;
+import nl.han.ica.icss.ast.literals.BoolLiteral;
 import nl.han.ica.icss.ast.literals.PercentageLiteral;
 import nl.han.ica.icss.ast.literals.PixelLiteral;
 import nl.han.ica.icss.ast.literals.ScalarLiteral;
@@ -11,6 +12,7 @@ import nl.han.ica.icss.ast.operations.MultiplyOperation;
 import nl.han.ica.icss.ast.operations.SubtractOperation;
 import nl.han.ica.icss.ast.types.ExpressionType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -35,8 +37,10 @@ public class Evaluator implements Transform {
         if(node instanceof Stylesheet | node instanceof Stylerule | node instanceof IfClause){
             variableValues.addFirst(new HashMap<String,Literal>());
         }
+
         setVariableValues(node);
         replaceOperation(node);
+        transformIfAndElseClause(node);
         for(ASTNode child: node.getChildren()){
             if(!node.getChildren().isEmpty()){
             evaluate(child);
@@ -54,7 +58,7 @@ public class Evaluator implements Transform {
         if(((Declaration) node).expression instanceof Operation){
           Expression value = evaluateOperations(((Declaration) node).expression);
 
-            ((Declaration) node).expression = value;
+            (((Declaration) node).expression) = value;
             }
         }
     }
@@ -144,6 +148,49 @@ public class Evaluator implements Transform {
             }
         }
         return null;
+    }
+
+    public void transformIfAndElseClause(ASTNode node) {
+        ArrayList<Declaration> body = new ArrayList<>();
+        ASTNode clauseToDelete = null;
+        if (node instanceof Stylerule) {
+            for (ASTNode child : node.getChildren()) {
+                if (child instanceof IfClause) {
+                    body.addAll(evaluateIfAndElseClause(child));
+                    clauseToDelete = child;
+                }
+                ((Stylerule) node).body.remove(clauseToDelete);
+                for (Declaration declaration : body) {
+                    node.addChild(declaration);
+                }
+            }
+        }
+    }
+
+    public ArrayList<Declaration> evaluateIfAndElseClause(ASTNode node){
+        ArrayList<Declaration> body = new ArrayList<>();
+        ArrayList<Declaration> elseBody = new ArrayList<>();
+        for(ASTNode child: node.getChildren()){
+            if(child instanceof IfClause){
+                body.addAll(evaluateIfAndElseClause(child));
+            }if (child instanceof Declaration){
+                body.add((Declaration) child);
+            }
+            else if (child instanceof ElseClause){
+                for(ASTNode elseChild: child.getChildren()){
+                    if(elseChild instanceof IfClause){
+                        elseBody.addAll(evaluateIfAndElseClause(elseChild));
+                    }else if (elseChild instanceof Declaration){
+                        elseBody.add((Declaration) elseChild);
+                    }
+                }
+            }
+        } if(((BoolLiteral) ((IfClause) node).conditionalExpression).value){
+                return body;
+        }else{
+            return elseBody;
+        }
+
     }
 
     
