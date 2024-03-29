@@ -65,7 +65,8 @@ public class Evaluator implements Transform {
         ArrayList<Declaration> body = new ArrayList<>();
         ASTNode clauseToDelete = null;
         if (node instanceof Stylerule) {
-            for (ASTNode child : node.getChildren()) {
+            for (ASTNode child : node.getChildren())
+            {
                 if (child instanceof IfClause) {
                     body.addAll(evaluateIfAndElseClause(child));
                     clauseToDelete = child;

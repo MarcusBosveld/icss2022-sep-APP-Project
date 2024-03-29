@@ -35,7 +35,6 @@ public class Checker {
         }
         checkDeclaration(node);
         checkVariableAssignment(node);
-//        checkOperationsSameLiterals(node);
         checkOperation(node);
         checkBooleanIfClause(node);
         for(ASTNode child: node.getChildren()){
@@ -67,27 +66,27 @@ public class Checker {
             switch (propertyName){
                 case "Property: (background-color)":
                     if(expressionType != ExpressionType.COLOR && !isVariableReference && !isOperation){
-                        declaration.setError("Gast dit is toch geen kleur");
+                        declaration.setError("Er kunnen hier alleen kleuren gebruikt worden");
                     }
                     break;
                 case "Property: (color)":
                     if(expressionType != ExpressionType.COLOR && !isVariableReference && !isOperation){
-                        declaration.setError("Gast dit is toch geen kleur");
+                        declaration.setError("Er kunnen hier alleen kleuren gebruikt worden");
                     }
                     break;
                 case "Property: (width)":
                     if(expressionType != ExpressionType.PIXEL && expressionType != ExpressionType.PERCENTAGE && !isVariableReference && !isOperation){
-                        declaration.setError("Gast dit is toch geen breedte");
+                        declaration.setError("Er kunnen hier alleen pixels of percentages gebruikt worden");
                     }
                     break;
                 case "Property: (height)":
                     if(expressionType != ExpressionType.PIXEL && expressionType != ExpressionType.PERCENTAGE && !isVariableReference && !isOperation){
-                        declaration.setError("Gast dit is toch geen hoogte");
+                        declaration.setError("Er kunnen hier alleen pixels of percentages gebruikt worden");
                     }
                     break;
 
                 default:
-                    declaration.setError("Deze property zit nog niet in deze versie. Hij is er wel wanneer GTA 7 uitkomt.");
+                    declaration.setError("Deze property zit niet in deze versie.");
             }
 
         }
@@ -133,11 +132,10 @@ public class Checker {
          if (node instanceof VariableReference & !isVariableAssignment){
             String variableName = ((VariableReference) node).name;
             if(getVariableReferenceType(variableName) == ExpressionType.UNDEFINED){
-                node.setError("Gast, Hoe wil je een variabele gebruiken die nog geen waarde heeft?");
+                node.setError("De variabele heeft geen waarde");
             }
         }
     }
-//TODO: Fixen dat een kleur aan de rechter kant ook fout wordt gerekend. En wat refactoren.
     public ASTNode checkOperation(ASTNode node) {
         if (node instanceof Operation) {
             ASTNode leftSide = node.getChildren().get(0);
@@ -175,11 +173,11 @@ public class Checker {
 
     public ASTNode checkAddAndSubtractOperation(ASTNode node, ASTNode leftside, ASTNode rightside){
             if(leftside instanceof PixelLiteral && !(rightside instanceof PixelLiteral)){
-                node.setError("Ewa broer, je moet alleen rekenen met pixels bij pixels asabi");
+                node.setError("Er mag alleen gerekend worden met pixels bij pixels");
             }else if(leftside instanceof PercentageLiteral && !(rightside instanceof PercentageLiteral)){
-                node.setError("Ewa broer, je moet alleen rekenen met percentages bij percentages asabi");
+                node.setError("Er mag alleen gerekend worden met percentages bij percentages");
             }else if(leftside instanceof ScalarLiteral && !(rightside instanceof ScalarLiteral)){
-                node.setError("Ewa broer, je moet alleen rekenen met Scalaire waardes bij Scalaire waardes asabi");
+                node.setError("Er mag alleen gerekend worden met scalars bij scalars");
             }else{
                 return leftside;
             }
@@ -188,13 +186,13 @@ public class Checker {
 
         public ASTNode checkMultiplyOperation(ASTNode node, ASTNode leftside, ASTNode rightside){
             if (leftside instanceof PixelLiteral && !(rightside instanceof ScalarLiteral)) {
-                node.setError("Ewa broer, je mag alleen vermedigvuldigen met Scalaire waardes asabi");
+                node.setError("Er mag alleen vermenigvuldigd worden met scalaire waarden");
             }
             else if (leftside instanceof PercentageLiteral && !(rightside instanceof ScalarLiteral)) {
-                node.setError("Ewa broer, je mag alleen vermedigvuldigen met Scalaire waardes asabi");
+                node.setError("Er mag alleen vermenigvuldigd worden met scalaire waarden");
             }
             else if (leftside instanceof ScalarLiteral && rightside instanceof ScalarLiteral) {
-                node.setError("Ewa broer, je mag scalaire waardes niet met elkaar vermedigvuldigen asabi");
+                node.setError("Scalaire waardes mogen niet met elkaar vermenigvuldigd worden");
             }
             else if (leftside instanceof ScalarLiteral ){
                 return rightside;
@@ -214,10 +212,10 @@ public class Checker {
             ASTNode variable = node.getChildren().get(0);
             if(variable instanceof VariableReference){
                 if(getVariableReferenceType(((VariableReference) variable).name) != ExpressionType.BOOL){
-                    node.setError("Ewa broer, je moet een boolean gebruiken in een if clause asabi");
+                    node.setError("Er nag alleen een boolean gebruikt worden in een if clause");
                 }
             }else if (variable instanceof Literal && !(variable instanceof BoolLiteral)){
-                node.setError("Ewa broer, je moet een boolean gebruiken in een if clause asabi");
+                node.setError("Er nag alleen een boolean gebruikt worden in een if clause");
             }
         }
     }
