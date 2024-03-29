@@ -67,8 +67,8 @@ public class Evaluator implements Transform {
     public void replaceVariableReference(ASTNode node){
         if(node instanceof Declaration){
             if(((Declaration) node).expression instanceof VariableReference){
-                Literal value = getVariableValues(((Declaration) node).expression);
-                ((Declaration) node).expression = value;
+              Literal value = getVariableValues(((Declaration) node).expression);
+               ((Declaration) node).expression = value;
             }
         }
     }
@@ -173,6 +173,7 @@ public class Evaluator implements Transform {
                 for (Declaration declaration : body) {
                     node.addChild(declaration);
                 }
+                body.clear();
             }
         }
     }
