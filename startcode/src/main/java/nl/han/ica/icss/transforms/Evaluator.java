@@ -39,6 +39,7 @@ public class Evaluator implements Transform {
         }
 
         setVariableValues(node);
+        replaceVariableReference(node);
         replaceOperation(node);
         transformIfAndElseClause(node);
         for(ASTNode child: node.getChildren()){
@@ -59,6 +60,15 @@ public class Evaluator implements Transform {
           Expression value = evaluateOperations(((Declaration) node).expression);
 
             (((Declaration) node).expression) = value;
+            }
+        }
+    }
+
+    public void replaceVariableReference(ASTNode node){
+        if(node instanceof Declaration){
+            if(((Declaration) node).expression instanceof VariableReference){
+                Literal value = getVariableValues(((Declaration) node).expression);
+                ((Declaration) node).expression = value;
             }
         }
     }
@@ -170,6 +180,9 @@ public class Evaluator implements Transform {
     public ArrayList<Declaration> evaluateIfAndElseClause(ASTNode node){
         ArrayList<Declaration> body = new ArrayList<>();
         ArrayList<Declaration> elseBody = new ArrayList<>();
+        if(((IfClause)node).conditionalExpression instanceof VariableReference){
+            ((IfClause)node).conditionalExpression = getVariableValues(((IfClause)node).conditionalExpression);
+        }
         for(ASTNode child: node.getChildren()){
             if(child instanceof IfClause){
                 body.addAll(evaluateIfAndElseClause(child));
