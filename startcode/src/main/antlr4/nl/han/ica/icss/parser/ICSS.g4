@@ -45,11 +45,10 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 //--- PARSER: ---
-
 stylesheet: (variableAssignment | styleRule)+ | EOF;
 
 
-
+//Literals
 pixelLiteral: PIXELSIZE;
 colorLiteral: COLOR;
 percentageLiteral: PERCENTAGE;
@@ -57,22 +56,22 @@ scalarLiteral: SCALAR;
 boolLiteral: TRUE | FALSE;
 
 literal: colorLiteral | percentageLiteral | scalarLiteral | boolLiteral | pixelLiteral;
-
+//Declaraties
 declaration: propertyName COLON (literal | variableReference | operation) SEMICOLON;
 
 
-//Variables
+//Variabelen
 variableReference: CAPITAL_IDENT;
 variableAssignment: variableReference ASSIGNMENT_OPERATOR (literal|operation) SEMICOLON | variableReference SEMICOLON;
 
-//Operations
+//Operaties
 multiplyOperation: MUL;
 addOperation: PLUS;
 subtractOperation: MIN;
 
 operation: operation (multiplyOperation) operation | operation (addOperation|subtractOperation) operation | (literal | variableReference) | '('operation')';
 
-//CSS Rules
+//CSS regels
 classSelector: CLASS_IDENT;
 propertyName: LOWER_IDENT;
 idSelector: ID_IDENT;
