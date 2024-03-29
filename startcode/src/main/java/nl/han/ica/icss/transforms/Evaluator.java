@@ -10,11 +10,9 @@ import nl.han.ica.icss.ast.literals.ScalarLiteral;
 import nl.han.ica.icss.ast.operations.AddOperation;
 import nl.han.ica.icss.ast.operations.MultiplyOperation;
 import nl.han.ica.icss.ast.operations.SubtractOperation;
-import nl.han.ica.icss.ast.types.ExpressionType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 public class Evaluator implements Transform {
 
@@ -41,7 +39,7 @@ public class Evaluator implements Transform {
         setVariableValues(node);
         replaceVariableReference(node);
         replaceOperation(node);
-        transformIfAndElseClause(node);
+        replaceIfAndElseClause(node);
         for(ASTNode child: node.getChildren()){
             if(!node.getChildren().isEmpty()){
             evaluate(child);
@@ -60,6 +58,23 @@ public class Evaluator implements Transform {
           Expression value = evaluateOperations(((Declaration) node).expression);
 
             (((Declaration) node).expression) = value;
+            }
+        }
+    }
+    public void replaceIfAndElseClause(ASTNode node) {
+        ArrayList<Declaration> body = new ArrayList<>();
+        ASTNode clauseToDelete = null;
+        if (node instanceof Stylerule) {
+            for (ASTNode child : node.getChildren()) {
+                if (child instanceof IfClause) {
+                    body.addAll(evaluateIfAndElseClause(child));
+                    clauseToDelete = child;
+                }
+                ((Stylerule) node).body.remove(clauseToDelete);
+                for (Declaration declaration : body) {
+                    node.addChild(declaration);
+                }
+                body.clear();
             }
         }
     }
@@ -160,23 +175,7 @@ public class Evaluator implements Transform {
         return null;
     }
 
-    public void transformIfAndElseClause(ASTNode node) {
-        ArrayList<Declaration> body = new ArrayList<>();
-        ASTNode clauseToDelete = null;
-        if (node instanceof Stylerule) {
-            for (ASTNode child : node.getChildren()) {
-                if (child instanceof IfClause) {
-                    body.addAll(evaluateIfAndElseClause(child));
-                    clauseToDelete = child;
-                }
-                ((Stylerule) node).body.remove(clauseToDelete);
-                for (Declaration declaration : body) {
-                    node.addChild(declaration);
-                }
-                body.clear();
-            }
-        }
-    }
+
 
     public ArrayList<Declaration> evaluateIfAndElseClause(ASTNode node){
         ArrayList<Declaration> body = new ArrayList<>();
@@ -207,5 +206,4 @@ public class Evaluator implements Transform {
 
     }
 
-    
 }
